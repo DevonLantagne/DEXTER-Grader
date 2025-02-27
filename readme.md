@@ -1,5 +1,9 @@
 # DEXTER Grader
-This app is designed to assist teachers in grading assignments efficiently by providing an intuitive, streamlined interface. It allows teachers to create grading projects, import rubrics, and student names, and grade assignments one problem at a time using customizable criteria.
+DEXTER Grader (DEXTER) is a grading calculator and gradebook manager. DEXTER’s main goal is to improve the efficiency and consistency of grading. The secondary goal of DEXTER is to provide insights into student performance. 
+
+This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the User Guide on how to find, create, or format these files.
+
+DEXTER is a "standalone" MATLAB App. To use a standalone MATLAB app, you need the MATLAB Runtime. When you install DEXTER, the runtime will also be installed if it is not already on your computer. DEXTER is currently only supported on Windows OS.
 
 ## Documentation
 See below for features and installation.
