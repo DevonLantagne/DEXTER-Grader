@@ -30,9 +30,17 @@ Only one sheet should exist in an Excel file – DEXTER will only read the first
 
 Rubrics require the first row of the spreadsheet to contain the following columns (with EXACT spelling and capitalization). These columns can be in any order.
 
-[TODO Add Table (VS Extension)]
-
 Each row contains a criterion. Completely empty rows are also acceptable. A criterion row with a Problem and Problem Weight entry defines a new problem.
+
+| **Column Name**          | **Required** | **(Data Type) Description**                                                                                                                                                                                                                                                                    |
+|--------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Problem**              | Yes          | (string) The name of the problem.                                                                                                                                                                                                                                                              |
+| **Problem Weight**       | Yes          | (numeric) The relative weighting of the problem. DEXTER will normalize your weights such that they total 1 (100%).                                                                                                                                                                             |
+| **Criteria Points**      | Yes          | (numeric) The number of points to allocate to each criterion. The sum of criteria within a problem makes up the total points of the problem. The percentage of correct points is computed, then multiplied by the Problem Weight to yield the problem's total contribution to the total grade. |
+| **Part**                 | No           | (string) If a criterion belongs to a group of criteria. Does not impact scoring. This is purely cosmetic to help grade faster.                                                                                                                                                                 |
+| **Criteria Name**        | Yes          | (string) The primary description of the criterion. This is shown on the app and in the grade printout to students.                                                                                                                                                                             |
+| **Criteria Description** | No           | (string) A more detailed description of the criterion. Consider including more detailed solutions or grading guides. The description is not available on grade printouts - only the instructor can see them when hovering their mouse over the criterion description text.                     |
+
 
 ### Example Rubrics
 Example .xlsx files can be found in the examples folder but several examples are explained below.
