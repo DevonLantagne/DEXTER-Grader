@@ -1,39 +1,6 @@
 classdef DEXTER < matlab.apps.AppBase
     %%DEXTER is an app for grading custom assignment rubrics.
 
-
-    %% Record of Revisions
-    % 1.1.0:
-    %   - Redesigned the New  select multiple sections when creating a new project.
-    %   - The "Export" menu is now "Grade Printouts" and allows
-    %   experimental PDF printouts.
-    %   - Added keybinds for changing students and problems
-    %
-    % 1.2.0:
-    %   - Import class list via myMSOE and Canvas
-    %       - Importing a class list now separates first and last names.
-    %       - Canvas does not separate first/last names, so DEXTER guesses.
-    %       - Can view and edit the class list from the menubar.
-    %   - New Settings Panel
-    %       - The new home for any user preferences
-    %       - Change font sizes
-    %       - Change keyboard shortcuts (primitive)
-    %   - Sorting
-    %       - You can now sort students by first/last name.
-    %   - Added a Help menu item to bring you to the Teams User Guide.
-    %   - This update will wipe your previous user settings.
-    %   - This update is backwards compatible with previous saved projects.
-    %  
-    % 1.2.1:
-    %   - Minor wording changes for clarity when loading class lists.
-    %   - Fixed a bug when using MyMSOE for class list imports.
-    %
-    % 1.3.0:
-    %   
-    %   
-    %   
-
-
     %% Properties
     % App components visible to other code (and Command Window)
     properties (Access = public)
@@ -309,6 +276,9 @@ classdef DEXTER < matlab.apps.AppBase
             else
                 app.m_file_enableAutoSave.Checked = 'on';
             end
+        end
+        function cb_changeClassList(app,~)
+            app.EditClassList();
         end
         function cb_changeSettings(app,~)
             OpenSettings(app);
@@ -691,7 +661,7 @@ classdef DEXTER < matlab.apps.AppBase
                 'AutoResizeChildren', 'off',...
                 'WindowKeyPressFcn', createCallbackFcn(app, @cb_keypress, true),...
                 "CloseRequestFcn", createCallbackFcn(app, @cb_dexFigClose));
-            app.fig.Icon = 'iconLarge.png';
+            app.fig.Icon = fullfile('DEXTER_resources','icon_48.png');
             if app.Debug; app.fig.Visible = "on"; end
             
             % Welome Text
@@ -756,8 +726,10 @@ classdef DEXTER < matlab.apps.AppBase
         function createCriteriaList(app)
 
             app.ItemGrid = uigridlayout(app.ItemMainGrid, [app.cfg.NumMaxItems,4], ...
-                "ColumnWidth", {'fit', 'fit', 'fit', '1x'},"Padding",[0 10 0 10], ...
-                "Scrollable", "on", "RowHeight", repmat({'fit'}, app.cfg.NumMaxItems,1));
+                "ColumnWidth", {'fit', 'fit', 'fit', '1x'}, ...
+                "Padding",[0 10 0 10], ...
+                "Scrollable", "on", ...
+                "RowHeight", repmat({'fit'}, app.cfg.NumMaxItems,1));
 
             for row = 1:app.cfg.NumMaxItems
                 % Col 1 (spinner)
@@ -812,7 +784,7 @@ classdef DEXTER < matlab.apps.AppBase
 
             app.m_edit = uimenu(app.fig, "Text", "Edit");
             app.m_edit_classlist = uimenu(app.m_edit, "Text", "Class List...", ...
-                "MenuSelectedFcn", createCallbackFcn(app, @cb_New), ...
+                "MenuSelectedFcn", createCallbackFcn(app, @cb_changeClassList), ...
                 "Tooltip", app.tooltips.m_edit_classlist, "enable", "off");
             app.m_edit_usersettings = uimenu(app.m_edit, "Text", "User Settings...",...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_changeSettings));
@@ -1355,7 +1327,7 @@ classdef DEXTER < matlab.apps.AppBase
                 'position',     [0 0 WindowSize],...
                 'resize',       'off',...
                 'AutoResizeChildren', 'off',...
-                'Icon',         'iconLarge.png');
+                'Icon',         fullfile('DEXTER_resources','icon_48.png'));
 
             OldUnits = app.fig.Units;
             app.fig.Units = "pixels";
@@ -1544,7 +1516,7 @@ classdef DEXTER < matlab.apps.AppBase
                 'name',         "DEXTER > User Settings",...
                 'position',     [0 0 WindowSize],...
                 'AutoResizeChildren', 'off',...
-                'Icon',         'iconLarge.png');
+                'Icon',         fullfile('DEXTER_resources','icon_48.png'));
 
             OldUnits = app.fig.Units;
             app.fig.Units = "pixels";
@@ -1688,7 +1660,7 @@ classdef DEXTER < matlab.apps.AppBase
                 'name',         "DEXTER > Edit Class List",...
                 'position',     [0 0 WindowSize],...
                 'AutoResizeChildren', 'off',...
-                'Icon',         'iconLarge.png');
+                'Icon',         fullfile('DEXTER_resources','icon_48.png'));
 
             OldUnits = app.fig.Units;
             app.fig.Units = "pixels";

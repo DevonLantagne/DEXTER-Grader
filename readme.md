@@ -6,10 +6,9 @@ This is not a unified gradebook. DEXTER acts on individual assignments/exams; yo
 DEXTER is a "standalone" MATLAB App. To use a standalone MATLAB app, you need the MATLAB Runtime. When you install DEXTER, the runtime will also be installed if it is not already on your computer. DEXTER is currently only supported on Windows OS.
 
 ## Documentation
-See below for features and installation.
-For detailed use:
 - [Installation Guide](docs/installation.md)
 - [Usage Handbook](docs/usage.md)
+- [Patch Notes](docs/patchnotes.md)
 
 ## Features
 ### Import Rubrics and Student Lists
