@@ -1,6 +1,12 @@
 classdef DEXTER < matlab.apps.AppBase
     %%DEXTER is an app for grading custom assignment rubrics.
 
+    % New in this feature: Criteria Feedback Comments
+    %   + Feedback Buttons on each criteria:
+    %       pressing button opens a new window to enter comment or select
+    %       other comment.
+    %   Need to update Rubric objects to hold feedback column
+
     %% Properties
     % App components visible to other code (and Command Window)
     properties (Access = public)
@@ -104,6 +110,8 @@ classdef DEXTER < matlab.apps.AppBase
         RubricName
         SaveFileName
         WindowBaseName
+
+        PastComments
     end
     properties (Constant)
 
@@ -223,6 +231,26 @@ classdef DEXTER < matlab.apps.AppBase
         function out = get.WindowBaseName(app)
             [~,name,ext] = fileparts(app.SaveFile);
             out = app.window_name + ": """ + name + ext + """";
+        end
+        function out = get.PastComments(app)
+            % TODO - change CommentHeadername
+            % return unique comments within ALL student's rubric entries
+            
+            AllComments = [];
+            CommentHeaderName = "Feedback";
+            
+            for st = 1:app.NumStudents
+                % Get all comments for a student
+                StComments = app.StTbl{st,"Rubric"}{1}{:,CommentHeaderName};
+                % Remove empty comments
+                StComments(StComments=="") = [];
+                % Add to master list
+                AllComments = [AllComments, StComments];
+            end
+
+            % Prune duplicate comments (and sort)
+            out = unique(AllComments);
+
         end
     end
 
@@ -386,6 +414,15 @@ classdef DEXTER < matlab.apps.AppBase
         end
         function cb_addFB(app, event)
             fprintf('FB Button pressed for criteria %d\n', event.Source.UserData)
+            
+            app.ModifyFeedback();
+
+            % Open a new window:
+            %   - Large text input box on the top for the comment.
+            %   - Below, use a dropdown list of previous comments to
+            %   auto-fill the input box. Allow user to modify previous
+            %   comment in this comment (makes another unique comment).
+            %   + METHOD to get all unique comments.
         end
         function cb_reportClass(app,~)
             ShowReport(app)
@@ -557,6 +594,9 @@ classdef DEXTER < matlab.apps.AppBase
                     else
                         app.ItemBtns(thisItem).Value = 0; % button off state
                     end
+
+                    % TODO Update FdBk button to bold or something to
+                    % indicate a comment exists for this item.
                 end
             end
 
@@ -648,6 +688,21 @@ classdef DEXTER < matlab.apps.AppBase
                     end
 
                     stepVer = "1.2.0"; % This now supports what 1.2.0 runs on
+
+                case {"1.2.0", "1.2.1"}
+                    % Add criteria comments (Feedback) to rubrics
+                    for st = 1:app.NumStudents
+                        RubTable = app.StTbl{st,"Rubric"}{1};
+                        TableHeaders = string(RubTable.Properties.VariableNames);
+                        if ~ismember("Feedback", TableHeaders)
+                            % Feedback column missing, add it
+                            RubTable.Feedback = strings(height(Rub), 1);
+                            % Insert rubric back into StTbl
+                            app.StTbl(st,"Rubric") = {RubTable};
+                        end
+                    end
+
+                    stepVer = "1.3.0";
 
                 otherwise
                     return
@@ -1254,6 +1309,9 @@ classdef DEXTER < matlab.apps.AppBase
             end
 
             data.PointsEarned = zeros(height(data), 1);
+
+            data.Feedback = strings(height(data), 1);
+            
             pass = true;
         end
         function OutTbl = ExpandTable(StudentTbl)
@@ -1702,6 +1760,16 @@ classdef DEXTER < matlab.apps.AppBase
                 UpdateUI(app)
                 close(thisfig)
             end
+        end
+        function ModifyFeedback(app)
+            % TODO
+            % Shows small window to edit feedback for a criteria item
+
+
+
+
+
+            
         end
     end
 
