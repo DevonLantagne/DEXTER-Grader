@@ -61,6 +61,7 @@ classdef DEXTER < matlab.apps.AppBase
         ItemBtns		    matlab.ui.control.StateButton
         ItemParts		    matlab.ui.control.Label
         ItemTexts		    matlab.ui.control.Label
+        ItemFBBtns          matlab.ui.control.Button
 
         % Aux Figures
         CRfig               matlab.ui.Figure
@@ -382,6 +383,9 @@ classdef DEXTER < matlab.apps.AppBase
                 end
             end
             UpdateUI(app)
+        end
+        function cb_addFB(app, event)
+            fprintf('FB Button pressed for criteria %d\n', event.Source.UserData)
         end
         function cb_reportClass(app,~)
             ShowReport(app)
@@ -725,8 +729,8 @@ classdef DEXTER < matlab.apps.AppBase
         end
         function createCriteriaList(app)
 
-            app.ItemGrid = uigridlayout(app.ItemMainGrid, [app.cfg.NumMaxItems,4], ...
-                "ColumnWidth", {'fit', 'fit', 'fit', '1x'}, ...
+            app.ItemGrid = uigridlayout(app.ItemMainGrid, [app.cfg.NumMaxItems,5], ...
+                "ColumnWidth", {'fit', 'fit', 'fit', '1x', 'fit'}, ...
                 "Padding",[0 10 0 10], ...
                 "Scrollable", "on", ...
                 "RowHeight", repmat({'fit'}, app.cfg.NumMaxItems,1));
@@ -758,6 +762,14 @@ classdef DEXTER < matlab.apps.AppBase
                     "text", "test");
                 app.ItemTexts(row).Layout.Row = row;
                 app.ItemTexts(row).Layout.Column = 4;
+
+                % Col 5 (criteria feedback comments)
+                app.ItemFBBtns(row) = uibutton(app.ItemGrid, "push", "Text", "FdBk",...
+                    "ButtonPushedFcn",createCallbackFcn(app, @cb_addFB, true),...
+                    "UserData",row);
+                app.ItemFBBtns(row).Layout.Row = row;
+                app.ItemFBBtns(row).Layout.Column = 5;
+
             end
             set(allchild(app.ItemGrid),'fontsize',app.user.FontSizeBody)
         end
