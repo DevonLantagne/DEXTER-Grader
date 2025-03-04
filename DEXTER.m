@@ -5,7 +5,9 @@ classdef DEXTER < matlab.apps.AppBase
     %   + Feedback Buttons on each criteria:
     %       pressing button opens a new window to enter comment or select
     %       other comment.
-    %   Need to update Rubric objects to hold feedback column
+    %   + Need to update Rubric objects to hold feedback column
+    %   - Build feedback GUI
+    %   - Render feedback on printout sheets
 
     %% Properties
     % App components visible to other code (and Command Window)
@@ -233,7 +235,6 @@ classdef DEXTER < matlab.apps.AppBase
             out = app.window_name + ": """ + name + ext + """";
         end
         function out = get.PastComments(app)
-            % TODO - change CommentHeadername
             % return unique comments within ALL student's rubric entries
             
             AllComments = [];
@@ -245,7 +246,7 @@ classdef DEXTER < matlab.apps.AppBase
                 % Remove empty comments
                 StComments(StComments=="") = [];
                 % Add to master list
-                AllComments = [AllComments, StComments];
+                AllComments = [AllComments; StComments];
             end
 
             % Prune duplicate comments (and sort)
@@ -412,17 +413,9 @@ classdef DEXTER < matlab.apps.AppBase
             end
             UpdateUI(app)
         end
-        function cb_addFB(app, event)
-            fprintf('FB Button pressed for criteria %d\n', event.Source.UserData)
-            
-            app.ModifyFeedback();
-
-            % Open a new window:
-            %   - Large text input box on the top for the comment.
-            %   - Below, use a dropdown list of previous comments to
-            %   auto-fill the input box. Allow user to modify previous
-            %   comment in this comment (makes another unique comment).
-            %   + METHOD to get all unique comments.
+        function cb_addFB(app, event)  
+            CritNum = event.Source.UserData; % Clicked criteria row
+            app.ModifyFeedback(CritNum);
         end
         function cb_reportClass(app,~)
             ShowReport(app)
@@ -597,6 +590,18 @@ classdef DEXTER < matlab.apps.AppBase
 
                     % TODO Update FdBk button to bold or something to
                     % indicate a comment exists for this item.
+                    ItemMask = ...
+                        (app.CurRubric.Problem == app.CurProb) & ...
+                        (app.CurRubric.CriteriaID == thisItem);
+                    if app.StTbl{app.CurSt, "Rubric"}{1}.Feedback(ItemMask) ~= ""
+                        set(app.ItemFBBtns(thisItem),...
+                            "FontWeight", "bold",...
+                            "FontAngle", "italic")
+                    else
+                        set(app.ItemFBBtns(thisItem),...
+                            "FontWeight", "normal",...
+                            "FontAngle", "normal")
+                    end
                 end
             end
 
@@ -1761,15 +1766,95 @@ classdef DEXTER < matlab.apps.AppBase
                 close(thisfig)
             end
         end
-        function ModifyFeedback(app)
-            % TODO
+        function ModifyFeedback(app, CritNum)
             % Shows small window to edit feedback for a criteria item
 
+            TextFontSize = 14; % includes button size
+            WindowSize = [650 400];
 
+            thisfig = uifigure(...
+                'visible',      'off',...
+                'windowstyle',  'modal',...
+                'name',         "Edit Feedback",...
+                'position',     [0 0 WindowSize],...
+                'resize',       'on',...
+                'AutoResizeChildren', 'on',...
+                'Icon',         fullfile('DEXTER_resources','icon_48.png'));
 
+            OldUnits = app.fig.Units;
+            app.fig.Units = "pixels";
+            AppPos = app.fig.Position;
+            app.fig.Units = OldUnits;
+            % Reposition this figure to be on top of app figure
+            movegui(thisfig, [AppPos(1)+(AppPos(3)-WindowSize(1))/2, AppPos(2)+(AppPos(4)-WindowSize(2))/2])
 
+            % ItemMask contains the logical array for the location of the
+            % selected criteria in the whole rubric.
+            ItemMask = ...
+                (app.CurRubric.Problem == app.CurProb) & ...
+                (app.CurRubric.CriteriaID == CritNum);
 
-            
+            thisGrid = uigridlayout(thisfig, [3,2], ...
+                "ColumnWidth", {'1x'},...
+                "RowHeight", {'fit','1x','fit'});
+
+            % Previous Feedback
+            if isempty(app.PastComments)
+                items = "";
+            else
+                items = [""; app.PastComments];
+            end
+            prevcomments = uidropdown(thisGrid, "Items", items,...
+                "Value", "", "placeholder", "Previous Feedback",...
+                "ValueChangedFcn",@cb_dropselected);
+            prevcomments.Layout.Column = [1, 2];
+
+            % Edit Box
+            commentbox = uitextarea(thisGrid, ...
+                "Placeholder", "Enter feedback",...
+                "Fontsize", TextFontSize);
+            commentbox.Layout.Column = [1, 2];
+            if app.StTbl{app.CurSt, "Rubric"}{1}.Feedback(ItemMask) ~= ""
+                commentbox.Value = app.StTbl{app.CurSt, "Rubric"}{1}.Feedback(ItemMask);
+            end
+
+            % Confirmation
+            % Cancel
+            uibutton(thisGrid, "Text","Cancel",'FontSize',TextFontSize,...
+                'ButtonPushedFcn',@cb_cancel);
+            % Accept
+            uibutton(thisGrid, "Text","Accept",'FontSize',TextFontSize,...
+                'ButtonPushedFcn',@cb_accept);
+
+            drawnow
+            thisfig.Visible = 'on';
+
+            function cb_dropselected(obj, ~)
+                % Overwrite text in editfield with dropdown content
+                if obj.Value == ""
+                    return
+                end
+                commentbox.Value = string(obj.Value);
+            end
+            function cb_cancel(~, ~)
+                close(thisfig)
+            end
+            function cb_accept(~, ~)
+                % Save edit field text to user's criteria feedback
+                app.StTbl{app.CurSt, "Rubric"}{1}.Feedback(ItemMask) = string(join(commentbox.Value," "));
+                % Apply changes to main figure if feedback is present
+                if app.StTbl{app.CurSt, "Rubric"}{1}.Feedback(ItemMask) ~= ""
+                    set(app.ItemFBBtns(CritNum),...
+                        "FontWeight", "bold",...
+                        "FontAngle", "italic")
+                else
+                    set(app.ItemFBBtns(CritNum),...
+                        "FontWeight", "normal",...
+                        "FontAngle", "normal")
+                end
+                close(thisfig)
+            end
+
         end
     end
 
