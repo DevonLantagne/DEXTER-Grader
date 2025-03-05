@@ -1,20 +1,7 @@
 classdef DEXTER < matlab.apps.AppBase
     %%DEXTER is an app for grading custom assignment rubrics.
 
-    % New in this feature: Criteria Feedback Comments
-    %   + Feedback Buttons on each criteria:
-    %       pressing button opens a new window to enter comment or select
-    %       other comment.
-    %   + Need to update Rubric objects to hold feedback column
-    %   - Build feedback GUI
-    %   - Render feedback on printout sheets
-    %
-    % PDF Exports
-    %
-    % Separated internal reports from student rubric exports.
-    %   Reports menu now only contains data for faculty
-    %   Exports menu now shows export options for giving to students.
-    %
+    % Fixed graphics bug for Report icon.
 
     %% Properties
     % App components visible to other code (and Command Window)
@@ -996,12 +983,21 @@ classdef DEXTER < matlab.apps.AppBase
 
         function ExportReport(app, StTbl, FullFilePath)
             % Generates and saves a PDF of a student's report
-            import mlreportgen.dom.*;
-            import mlreportgen.report.*;
-
+            
             PtFormatSpec = "%.1f";
 
-            rpt = Document(FullFilePath, 'pdf');
+            % Make the DOM document compilable
+            if isdeployed
+                makeDOMCompilable();
+            end
+
+            import mlreportgen.dom.*;
+            import mlreportgen.report.*;
+            
+            % Create file in APPDATA, then copy afterwards
+            tempfilelocation = fullfile(DEXTER.getAppDataPath, "tempfile.pdf");
+            rpt = Document(tempfilelocation, 'pdf');
+
             open(rpt);
             
             % margins
@@ -1093,6 +1089,9 @@ classdef DEXTER < matlab.apps.AppBase
             end
 
             close(rpt);
+
+            % Copy from APPDATA to user location
+            movefile(tempfilelocation, FullFilePath + ".pdf")
 
         end
         function ReportText = GenerateReportString(app,StTbl)
@@ -1647,7 +1646,8 @@ classdef DEXTER < matlab.apps.AppBase
             end
             app.CRfig = uifigure("WindowState","maximized",...
                 'name', app.WindowBaseName + " > Class Report",...
-                "Visible",'off');
+                "Visible",'off',...
+                'Icon', fullfile('Graphics','iconLarge.png'));
 
             HistHeightPix = 300;
 
