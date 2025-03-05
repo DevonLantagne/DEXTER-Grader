@@ -8,6 +8,13 @@ classdef DEXTER < matlab.apps.AppBase
     %   + Need to update Rubric objects to hold feedback column
     %   - Build feedback GUI
     %   - Render feedback on printout sheets
+    %
+    % PDF Exports
+    %
+    % Separated internal reports from student rubric exports.
+    %   Reports menu now only contains data for faculty
+    %   Exports menu now shows export options for giving to students.
+    %
 
     %% Properties
     % App components visible to other code (and Command Window)
@@ -41,7 +48,8 @@ classdef DEXTER < matlab.apps.AppBase
 
         m_reports	        matlab.ui.container.Menu
         m_reports_class     matlab.ui.container.Menu
-
+        
+        m_export	        matlab.ui.container.Menu
         m_export_stu	    matlab.ui.container.Menu
         m_export_all_txt	matlab.ui.container.Menu
         m_export_all_pdf	matlab.ui.container.Menu
@@ -425,9 +433,8 @@ classdef DEXTER < matlab.apps.AppBase
         end
 
         function cb_ExportStudent(app, ~)
-            filter = {'*.txt';'*.pdf'};
+            filter = {'*.pdf'; '*.txt'};
             ValidExtensions = extractAfter(string(filter), "*");
-            %filter = {'*.txt'};
             [file,path] = uiputfile(filter, "Export student report", fullfile(app.getUserHomePath,app.CurSt));
             if isequal(file, 0); return; end
             figure(app.fig)
@@ -487,6 +494,7 @@ classdef DEXTER < matlab.apps.AppBase
             app.m_file_save.Enable = "on";
             app.m_file_saveas.Enable = "on";
             app.m_reports.Enable = "on";
+            app.m_export.Enable = "on";
             app.m_file_enableAutoSave.Enable = "on";
             app.m_view.Enable = "on";
             app.m_edit_classlist.Enable = "on";
@@ -889,14 +897,16 @@ classdef DEXTER < matlab.apps.AppBase
             app.m_reports_class = uimenu(app.m_reports, "Text", "Classwide", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_reportClass), ...
                 "Tooltip", app.tooltips.m_classwide);
-            app.m_export_stu = uimenu(app.m_reports, "Text", "This student...", ...
+
+            app.m_export = uimenu(app.fig, "Text", "Export", "Enable", "off");
+            app.m_export_stu = uimenu(app.m_export, "Text", "This student...", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportStudent), ...
                 "Tooltip", app.tooltips.m_exportStudent,"Separator", "on");
-            app.m_export_all_txt = uimenu(app.m_reports, "Text", "All students (.txt)...", ...
+            app.m_export_all_txt = uimenu(app.m_export, "Text", "All students (.txt)...", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportAll, true), ...
                 "Tooltip", app.tooltips.m_exportAlltxt, "UserData", ".txt",...
                 "Separator", "on");
-            app.m_export_all_pdf = uimenu(app.m_reports, "Text", "All students (.pdf)... [Experimental]", ...
+            app.m_export_all_pdf = uimenu(app.m_export, "Text", "All students (.pdf)...", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportAll, true), ...
                 "Tooltip", app.tooltips.m_exportAllpdf, "UserData", ".pdf");
 
@@ -922,7 +932,7 @@ classdef DEXTER < matlab.apps.AppBase
 
         function ExportStudent(app, ScoreTbl, DestFolder, method)
             if nargin < 4
-                method = ".txt";
+                method = ".pdf";
             end
             % If ScoreTbl only has one student AND DestFolder has an
             % extension, then we are saving one student with a particular
@@ -956,11 +966,6 @@ classdef DEXTER < matlab.apps.AppBase
 
                     case ".pdf"
                         app.ExportReport(ThisTbl, DestFolder + filesep + StdNames(s_idx));
-                        %h_page = app.GeneratePage(ThisTbl); % Generate the PDF page data
-                        warning('off')
-                        %saveas(h_page, DestFolder + filesep + StdNames(s_idx), 'pdf')
-                        warning('on')
-                        %close(h_page)
                 end
             end
             close(d)
@@ -994,25 +999,22 @@ classdef DEXTER < matlab.apps.AppBase
             import mlreportgen.dom.*;
             import mlreportgen.report.*;
 
-            BreakLineWidth = 90;
             PtFormatSpec = "%.1f";
 
-            stName = string(StTbl.Properties.RowNames);
-
-            %pdfName = sprintf('%s.pdf', strrep(stName, ' ', '_'));
             rpt = Document(FullFilePath, 'pdf');
+            open(rpt);
             
             % margins
-            % sec = Section();
-            % pageLayout = sec.PageLayout;
-            % pageLayout.PageMargins.Top = '0.5in';
-            % pageLayout.PageMargins.Bottom = '0.5in';
-            % pageLayout.PageMargins.Left = '1in';
-            % pageLayout.PageMargins.Right = '1in';
-            % append(rpt, sec);
+            pageLayout = rpt.CurrentPageLayout;
+            pageLayout.PageMargins.Top = '0.25in';
+            pageLayout.PageMargins.Bottom = '0.5in';
+            pageLayout.PageMargins.Left = '0.75in';
+            pageLayout.PageMargins.Right = '0.75in';
+            pageLayout.PageMargins.Gutter = '0in';
+            pageLayout.Hyphenation = false;
             
             % Student Title
-            studentTitle = Paragraph(stName);
+            studentTitle = Paragraph(string(StTbl.Properties.RowNames));
             studentTitle.Style = {Bold(true), FontSize('18pt')}; 
             append(rpt, studentTitle);
             % Subtitle
@@ -1025,161 +1027,72 @@ classdef DEXTER < matlab.apps.AppBase
 
             % Total Grade
             if isnan(StTbl.ScorePerc)
-                gradeinfo = sprintf("Total Grade: %.1f%%  (%s)", 0, "F");
+                gradeinfo = Paragraph(sprintf("Total Grade: %.1f%%  (%s)", 0, "F"));
             else
-                gradeinfo = sprintf("Total Grade: %.1f%%  (%s)", ...
-                    StTbl.ScorePerc, StTbl.GradeLetter);
+                gradeinfo = Paragraph(sprintf("Total Grade: %.1f%%  (%s)", ...
+                    StTbl.ScorePerc, StTbl.GradeLetter));
             end
-            append(rpt, Paragraph(gradeinfo));
+            gradeinfo.Style = {Bold(true)};
+            append(rpt, gradeinfo);
+            append(rpt, Paragraph(""));
 
             % Rubric Items
             rub = StTbl.Rubric{1};
             rub.PointsEarned(isnan(rub.PointsEarned)) = 0; % all NaNs are zeros
-            LastProblem = "";
-            for ln = 1:height(rub)
-                if rub.Problem(ln) ~= LastProblem
-                    % New Problem!
-                    if LastProblem ~= ""
-                        % if coming from a previous problem, append
-                        % previous paragraph
-                        append(rpt, probGroup);
-                    end
-                    probGroup = Group();
-                    %probGroup.Style = {KeepTogether(true)};
-                    append(rpt, HorizontalRule());
 
-                    LastProblem = rub.Problem(ln);
-                    Earned = sum(rub.PointsEarned(rub.Problem == LastProblem), 'omitnan');
-                    OutOf = sum(rub.CriteriaPoints(rub.Problem == LastProblem));
-                    LG = app.GetLetterGrade(100*Earned/OutOf);
-                    % Print problem header
-                    probHeadertext = Paragraph(sprintf("%s: %.1f / %.1f = %.1f%% (%s)", ...
-                        LastProblem, Earned, OutOf, 100*Earned/OutOf, LG));
-                    probHeadertext.Style = {Bold(true), FontSize('14pt')}; 
-                    append(probGroup, probHeadertext);
+            % Get all problem names (in order)
+            for p = 1:app.NumProbs
+                probRub = rub(rub.Problem == app.ProblemNames(p), :);
+
+                rubTbl = Table();
+                rubTbl.Style = {Width('100%')};
+
+                % Problem header
+                Earned = sum(probRub.PointsEarned, 'omitnan');
+                OutOf = sum(probRub.CriteriaPoints);
+                LG = app.GetLetterGrade(100*Earned/OutOf);
+
+                % Print problem header
+                titleRow = TableRow();
+                titlePara = Paragraph(sprintf("%s: %.1f / %.1f = %.1f%% (%s)", ...
+                    app.ProblemNames(p), Earned, OutOf, 100*Earned/OutOf, LG));
+                titlePara.Style = {Bold(true), FontSize('12pt')};
+                append(titleRow, TableEntry(titlePara));
+                append(rubTbl, titleRow);
+
+                % Print criteria rows
+                for c = 1:height(probRub)
+                    % Criteria text
+                    row = TableRow();
+
+                    criteriaText = Paragraph(Text(sprintf(PtFormatSpec + " / " + PtFormatSpec + " - %s", ...
+                        probRub.PointsEarned(c), probRub.CriteriaPoints(c), probRub.CriteriaName(c))));
+                    criteriaText.Style = {FontSize('12pt')};
+                    thisTabEntry = TableEntry(criteriaText);
+
+                    append(row, thisTabEntry);
+                    append(rubTbl, row);
+
+                    % Add the FB as another line
+                    if probRub.Feedback(c) ~= ""
+                        row = TableRow();
+
+                        ThisText = Text(probRub.Feedback(c));
+                        FBpara = Paragraph(ThisText);
+                        FBpara.Style = {Italic(true), FontSize('11pt')};
+                        
+                        ThisEntry = TableEntry(FBpara);
+                        append(row, ThisEntry);
+                        append(rubTbl, row);
+                    end
+
                 end
-                % Print scores
-                criteriaText = sprintf(PtFormatSpec + " / " + PtFormatSpec + "  %s", ...
-                    rub.PointsEarned(ln), rub.CriteriaPoints(ln), rub.CriteriaName(ln));
-                append(probGroup, Paragraph(criteriaText));
-                if rub.Feedback(ln) ~= ""
-                    FBpara = Paragraph(rub.Feedback(ln));
-                    FBpara.Style = {Italic(true), FontSize('12pt')};
-                    append(probGroup, FBpara);
-                end
+                rubTbl.TableEntriesStyle = {KeepWithNext(true), Hyphenation(true)};
+                append(rpt, rubTbl);
+                append(rpt, Paragraph(""));
             end
-            append(rpt, probGroup); % append the last problem
 
             close(rpt);
-
-        end
-        function h_page = GeneratePage(app, StTbl)
-            % Generates a PDF of a student report from St
-
-            pageHeight = 11.6929;
-            pageWidth = 8.2677;
-            SideMargin = 0.05;
-
-            HeaderFontSize = 12;
-            RubricFontSize = 11;
-
-            BreakLineWidth = 80;
-            PtFormatSpec = "%.1f";
-
-            qp = @(ptr, height) [SideMargin ptr 1-SideMargin*2 height];
-
-            h_page = figure(...
-                'units','inches',...
-                'Position',[0 0 pageWidth pageHeight], ...
-                'color', 'w', ....
-                'MenuBar','none', ...
-                'PaperOrientation','portrait',....
-                'PaperType','A4',...
-                'visible','off');
-
-            StudentHeader = sprintf("MSOE ID: %d\n%s - %s",...
-                StTbl.MSOEID, StTbl.Section, app.RubricName);
-
-            % Student Header
-            Ypointer = 0.98;
-            ElHeight = 0.05;
-            Ypointer = Ypointer - ElHeight;
-            uicontrol(h_page,'Style','text','Units','normalized','Position', qp(Ypointer, ElHeight),...
-                'string', StTbl.Properties.RowNames, 'HorizontalAlignment','left', 'FontSize', HeaderFontSize*2)
-            ElHeight = 0.04;
-            Ypointer = Ypointer - ElHeight;
-            uicontrol(h_page,'Style','text','Units','normalized','Position', qp(Ypointer, ElHeight),...
-                'string', StudentHeader, 'HorizontalAlignment','left', 'FontSize', HeaderFontSize)
-
-            % Final Score
-            ElHeight = 0.03;
-            Ypointer = Ypointer - ElHeight;
-            if isnan(StTbl.ScorePerc)
-                ScorePerc = 0;
-                GradeLetter = "F";
-            else
-                ScorePerc = StTbl.ScorePerc;
-                GradeLetter = StTbl.GradeLetter;
-            end
-            uicontrol(h_page,'Style','text','Units','normalized','Position', qp(Ypointer, ElHeight),...
-                'string', sprintf('Total Score: %.1f%% %s', ScorePerc, GradeLetter), ...
-                'HorizontalAlignment','left', 'FontSize', HeaderFontSize)
-
-            % Rubric and Scores
-            str = GenerateScoreSheet();
-            uicontrol(h_page,'Style','text','Units','normalized','Position', qp(0.02, Ypointer-0.02),...
-                'string', str, 'HorizontalAlignment','left', 'FontSize', RubricFontSize)
-
-            set(h_page.Children, 'backgroundcolor', 'w')
-
-            drawnow
-
-            function str = GenerateScoreSheet()
-                rub = StTbl.Rubric{1};
-                rub.PointsEarned(isnan(rub.PointsEarned)) = 0; % all NaNs are zeros
-                LastProblem = "";
-                TextRubric = [];
-                for ln = 1:height(rub)
-                    if rub.Problem(ln) ~= LastProblem
-                        LastProblem = rub.Problem(ln);
-                        Earned = sum(rub.PointsEarned(rub.Problem == LastProblem), 'omitnan');
-                        OutOf = sum(rub.CriteriaPoints(rub.Problem == LastProblem));
-                        LG = app.GetLetterGrade(100*Earned/OutOf);
-                        % Print problem header
-                        TextRubric = sprintf("%s%s\n%s: %.1f / %.1f = %.1f%% (%s)\n", ...
-                            TextRubric, repmat('-',1,BreakLineWidth), LastProblem, Earned, OutOf, 100*Earned/OutOf, LG);
-                    end
-                    % Print scores
-                    TextRubric = sprintf("%s" + PtFormatSpec + " / " + PtFormatSpec + "  %s\n", ...
-                        TextRubric, rub.PointsEarned(ln), rub.CriteriaPoints(ln), rub.CriteriaName(ln));
-                end
-                str = TextRubric;
-                return
-
-                rub = StTbl.Rubric{1};
-                rub.PointsEarned(isnan(rub.PointsEarned)) = 0; % all NaNs are zeros
-                LastProblem = "";
-                str = [];
-                for ln = 1:height(rub)
-                    if rub.Problem(ln) ~= LastProblem
-                        LastProblem = rub.Problem(ln);
-                        Earned = sum(rub.PointsEarned(rub.Problem == LastProblem), 'omitnan');
-                        OutOf = sum(rub.CriteriaPoints(rub.Problem == LastProblem));
-                        LG = app.GetLetterGrade(100*Earned/OutOf);
-                        % Print problem header
-                        ap(sprintf("%s\n%s: %.1f / %.1f = %.1f%% (%s)\n", ...
-                            repmat('-',1,BreakLineWidth), LastProblem, Earned, OutOf, 100*Earned/OutOf, LG))
-                    end
-                    % Print scores
-                    ap(sprintf("%4.1f / %4.0f  %s\n", ...
-                        rub.PointsEarned(ln), rub.CriteriaPoints(ln), rub.CriteriaName(ln)))
-                end
-
-                function ap(NewStr)
-                    str = sprintf("%s%s", str, NewStr);
-                end
-
-            end
 
         end
         function ReportText = GenerateReportString(app,StTbl)
