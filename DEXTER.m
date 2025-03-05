@@ -699,7 +699,7 @@ classdef DEXTER < matlab.apps.AppBase
                         TableHeaders = string(RubTable.Properties.VariableNames);
                         if ~ismember("Feedback", TableHeaders)
                             % Feedback column missing, add it
-                            RubTable.Feedback = strings(height(Rub), 1);
+                            RubTable.Feedback = strings(height(RubTable), 1);
                             % Insert rubric back into StTbl
                             app.StTbl(st,"Rubric") = {RubTable};
                         end
