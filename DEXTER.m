@@ -1,7 +1,7 @@
 classdef DEXTER < matlab.apps.AppBase
     %%DEXTER is an app for grading custom assignment rubrics.
 
-    % Fixed graphics bug for Report icon.
+
 
     %% Properties
     % App components visible to other code (and Command Window)
