@@ -112,7 +112,7 @@ classdef DEXTER < matlab.apps.AppBase
     end
     properties (Constant)
 
-        version = "1.3.0"
+        version = "1.3.1"
 
         tooltips = struct(...
             "m_new",            "Start a new DEXTER Grader project", ...
@@ -126,7 +126,7 @@ classdef DEXTER < matlab.apps.AppBase
             "m_classwide",      "Opens a new window showing a summary of class performance on the assignment",...
             "m_exportStudent",  ["Generate a grade printout for the selected student."; "You can specify .txt or .pdf when prompted for the file name."],...
             "m_exportAlltxt",   ["Select a folder to receive generated grade printouts for all students";"Generates .txt files."],...
-            "m_exportAllpdf",   ["Select a folder to receive generated grade printouts for all students";"Generates .pdf files.";"";"EXPERIMENTAL: Formatting issues may occur.";"Connecting an external monitor may help."])
+            "m_exportAllpdf",   ["Select a folder to receive generated grade printouts for all students";"Generates .pdf files."])
 
         window_name = "DEXTER Grader"
 
@@ -706,6 +706,9 @@ classdef DEXTER < matlab.apps.AppBase
                     end
 
                     stepVer = "1.3.0";
+
+                case {"1.3.0"}
+                    stepVer = "1.3.1";
 
                 otherwise
                     return
