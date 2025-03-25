@@ -1152,7 +1152,6 @@ classdef DEXTER < matlab.apps.AppBase
         function FirstTimeSetup()
             % Init the DEXTER app data folder
             if ~isfolder(DEXTER.getAppDataPath); mkdir(DEXTER.getAppDataPath); end
-            %if ~isfolder(DEXTER.getAutoSavePath); mkdir(DEXTER.getAutoSavePath); end
 
             % generates and saves a config file
             DEXTER.InitConfig();
