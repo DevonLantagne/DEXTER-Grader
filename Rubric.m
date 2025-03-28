@@ -178,12 +178,75 @@ classdef Rubric
         end
         
         % Data Manipulation
-        function obj = ChangeScore_pc(obj, student, problem, criteriaID, score)
-            % Changes the score of a criteria item within a problem
-
+        function score = GetScore(obj, student, itemID)
+            arguments
+                obj Rubric
+                student string
+                itemID double
+            end
+            % Error checks (student and ID)
+            if ~any(obj.StudentNames == student)
+                error("GetScore: student %s does not exist.", student)
+            end
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("GetScore: itemID (%d) does not exist.", itemID)
+            end
+            % get score from table
+            score = obj.tbl.(student).PointsEarned(RowNum);
         end
-        function obj = ChangeScore_id(obj, student, itemID, score)
-
+        function feedback = GetFeedback(obj, student, itemID)
+            arguments
+                obj Rubric
+                student string
+                itemID double
+            end
+            % Error checks (student and ID)
+            if ~any(obj.StudentNames == student)
+                error("GetFeedback: student %s does not exist.", student)
+            end
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("GetFeedback: itemID (%d) does not exist.", itemID)
+            end
+            % get fb from table
+            feedback = obj.tbl.(student).Feedback(RowNum);
+        end
+        function obj = ChangeScore(obj, student, itemID, score)
+            arguments
+                obj Rubric
+                student string
+                itemID double
+                score double
+            end
+            % Error checks (student and ID)
+            if ~any(obj.StudentNames == student)
+                error("ChangeScore: student %s does not exist.", student)
+            end
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("ChangeScore: itemID (%d) does not exist.", itemID)
+            end
+            % write score to table
+            obj.tbl.(student).PointsEarned(RowNum) = score;
+        end
+        function obj = ChangeFB(obj, student, itemID, feedback)
+            arguments
+                obj Rubric
+                student string
+                itemID double
+                feedback string
+            end
+            % Error checks (student and ID)
+            if ~any(obj.StudentNames == student)
+                error("ChangeFB: student %s does not exist.", student)
+            end
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("ChangeFB: itemID (%d) does not exist.", itemID)
+            end
+            % write feedback to table
+            obj.tbl.(student).Feedback(RowNum) = feedback;
         end
     end
 
