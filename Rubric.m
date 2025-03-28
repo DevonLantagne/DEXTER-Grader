@@ -38,22 +38,27 @@ classdef Rubric
     %% GET Methods
     methods
         function out = get.NumStudents(obj)
+            if isempty(obj.tbl); out = 0; return; end
             out = length(obj.StudentNames);
         end
         function out = get.StudentNames(obj)
+            if isempty(obj.tbl); out = ""; return; end
             out = string(obj.tbl.Properties.VariableNames);
             out = out((obj.NumDataColumns+1):end);
         end
         function out = get.ProblemNames(obj)
+            if isempty(obj.tbl); out = ""; return; end
             out = unique(obj.tbl.Problem, 'stable');
         end
         function out = get.NumProbs(obj)
+            if isempty(obj.tbl); out = 0; return; end
             out = length(obj.ProblemNames);
         end
     end
 
     %% Public Methods
     methods (Access=public)
+        % Loading Rubrics and Students
         function [obj, msg] = LoadRubricTable(obj, FileName)
             % Read rubric sheet
             % Expects (6) columns: Problem, ProblemWeight, CriteriaPoints,
@@ -119,6 +124,8 @@ classdef Rubric
                 obj.tbl.(studentName) = [];
             end
         end
+        
+        % Information gathering
         function info = GetStudentInfo(obj, student)
             % Returns a structure of student info
             %   Problem info uses same index as order of problems
@@ -168,6 +175,15 @@ classdef Rubric
                     LG(n) = obj.grade_scale.Letter(idx);
                 end
             end
+        end
+        
+        % Data Manipulation
+        function obj = ChangeScore_pc(obj, student, problem, criteriaID, score)
+            % Changes the score of a criteria item within a problem
+
+        end
+        function obj = ChangeScore_id(obj, student, itemID, score)
+
         end
     end
 
@@ -231,10 +247,6 @@ classdef Rubric
 
             % Create item IDs
             data.ItemID = (1:height(data))';
-
-            %data.PointsEarned = zeros(height(data), 1);
-
-            %data.Feedback = strings(height(data), 1);
             
             pass = true;
         end
