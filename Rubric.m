@@ -176,7 +176,14 @@ classdef Rubric
                 end
             end
         end
-        
+        function points = GetCriteriaPoints(obj, itemID)
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("GetCriteriaPoints: itemID (%d) does not exist.", itemID)
+            end
+            points = obj.tbl.CriteriaPoints(RowNum);
+        end
+
         % Data Manipulation
         function score = GetScore(obj, student, itemID)
             arguments
@@ -213,6 +220,8 @@ classdef Rubric
             feedback = obj.tbl.(student).Feedback(RowNum);
         end
         function obj = ChangeScore(obj, student, itemID, score)
+            % NO PROTECTIONS for scores below zero or above max points
+            %   This allows for penalties and extra credit implementations.
             arguments
                 obj Rubric
                 student string
@@ -247,6 +256,118 @@ classdef Rubric
             end
             % write feedback to table
             obj.tbl.(student).Feedback(RowNum) = feedback;
+        end
+    
+        % Rubric-wide Manipulation
+        function obj = ChangeRubricCriteriaPoints_GUI(obj, itemID)
+            % A GUI frontend for the ChangeRubricCriteriaPoints method.
+
+            TitleFontSize = 16;
+            TextFontSize = 14; % includes button size
+            WindowSize = [400 400];
+
+            thisfig = uifigure(...
+                'visible',      'off',...
+                'windowstyle',  'modal',...
+                'name',         "New DEXTER Project",...
+                'position',     [0 0 WindowSize],...
+                'resize',       'off',...
+                'AutoResizeChildren', 'off',...
+                'Icon',         fullfile('Graphics','iconLarge.png'));
+
+            OldUnits = thisfig.Units;
+            thisfig.Units = "pixels";
+            %AppPos = thisfig.Position;
+            thisfig.Units = OldUnits;
+            % Reposition this figure to be on top of app figure
+            %movegui(thisfig, [AppPos(1)+(AppPos(3)-WindowSize(1))/2, AppPos(2)+(AppPos(4)-WindowSize(2))/2])
+            movegui('center')
+
+
+
+
+        end
+        function obj = ChangeRubricCriteriaPoints(obj, itemID, newScore, method)
+            % Method used to change the CriteriaPoints field during
+            % grading.
+            arguments
+                obj Rubric
+                itemID double
+                newScore double
+                method string
+            end
+
+            RowNum = find(obj.tbl.ItemID == itemID);
+            if isempty(RowNum)
+                error("ChangeRubricCriteriaPoints: itemID (%d) does not exist.", itemID)
+            end
+            tempScores = NaN(1,obj.NumStudents);
+            oldScores = tempScores;
+            for st_ind = 1:obj.NumStudents
+                st = obj.StudentNames(st_ind);
+                oldScores(st_ind) = obj.tbl.(st).PointsEarned(RowNum);
+            end
+
+            switch method
+                case "scale"
+                    % Scales existing scores to the new criteria:
+                    %   Full scores remain full scores.
+                    %   Zeros remain zeros.
+                    %   Partial credit is scaled proportionally.
+                    tempScores = (oldScores / obj.tbl.CriteriaPoints(RowNum)) * newScore;
+
+                case "scale_ceil"
+                    % Same procedure as scale but rounds the score up to
+                    % the nearest integer.
+                    tempScores = (oldScores / obj.tbl.CriteriaPoints(RowNum)) * newScore;
+                    tempScores = ceil(tempScores);
+
+                case "scale_floor"
+                    % Same procedure as scale but rounds the score down to
+                    % the nearest interger.
+                    tempScores = (oldScores / obj.tbl.CriteriaPoints(RowNum)) * newScore;
+                    tempScores = floor(tempScores);
+
+                case "ignore"
+                    % Already graded scores will not be changed
+                    %   If points increased, everyone will have missing
+                    %   points.
+                    %   If points decreased, full-credit scores will have
+                    %   EXTRA credit.
+                    return
+                
+                case "absolute"
+                    % Gives/takes points equal to the difference between
+                    % previous and new score.
+                    %   Full scores remain full scores.
+                    %   Zeros get the added points for free.
+                    %   Partial credit gets free points.
+                    tempScores = oldScores - obj.tbl.CriteriaPoints(RowNum) + newScore;
+                    tempScores(tempScores<0) = 0; % limit to no less than zero
+
+                case "reset"
+                    % All grades are reset back to zero for a full regrade.
+                    tempScores = oldScores * 0;
+
+                otherwise
+                    % Not an option
+                    return
+            end
+
+            % Apply temp scores
+            for st_ind = 1:obj.NumStudents
+                st = obj.StudentNames(st_ind);
+                obj.tbl.(st).PointsEarned(RowNum) = tempScores(st_ind);
+            end
+            % Update highest points
+            obj.tbl.CriteriaPoints(RowNum) = newScore;
+
+        end
+        function out = PercGrid(obj)
+            % Provides a numeric array of criteria percentages with each
+            % row being a criteria item and each column being a student.
+            % These data can be used for a heat-map.
+
         end
     end
 
