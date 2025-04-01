@@ -269,7 +269,7 @@ classdef Rubric
             thisfig = uifigure(...
                 'visible',      'off',...
                 'windowstyle',  'modal',...
-                'name',         "New DEXTER Project",...
+                'name',         "Change Criteria Points",...
                 'position',     [0 0 WindowSize],...
                 'resize',       'off',...
                 'AutoResizeChildren', 'off',...
@@ -277,14 +277,15 @@ classdef Rubric
 
             OldUnits = thisfig.Units;
             thisfig.Units = "pixels";
-            %AppPos = thisfig.Position;
+            %AppPos = app.Position;
             thisfig.Units = OldUnits;
             % Reposition this figure to be on top of app figure
             %movegui(thisfig, [AppPos(1)+(AppPos(3)-WindowSize(1))/2, AppPos(2)+(AppPos(4)-WindowSize(2))/2])
-            movegui('center')
+            movegui(thisfig, 'center')
 
+            
 
-
+            
 
         end
         function obj = ChangeRubricCriteriaPoints(obj, itemID, newScore, method)
@@ -363,11 +364,25 @@ classdef Rubric
             obj.tbl.CriteriaPoints(RowNum) = newScore;
 
         end
-        function out = PercGrid(obj)
+        function [OutPerc, CriteriaPoints] = PercGrid(obj)
             % Provides a numeric array of criteria percentages with each
             % row being a criteria item and each column being a student.
             % These data can be used for a heat-map.
+            
+            data = NaN(height(obj.tbl), obj.NumStudents);
+            % For all students, extract their scores and save to standard
+            % numeric array.
+            for ind = 1:obj.NumStudents
+                st = obj.StudentNames(ind);
+                data(:,ind) = obj.tbl.(st).PointsEarned ./ obj.tbl.CriteriaPoints;
+            end
 
+            if nargout == 1
+                OutPerc = data;
+            elseif nargout == 2
+                OutPerc = data;
+                CriteriaPoints = obj.tbl.CriteriaPoints;
+            end
         end
     end
 
