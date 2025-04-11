@@ -138,19 +138,21 @@ classdef Rubric
             info.name = student;
             
             % Compile info for each problem:
-            % Init across-problem stats:
             Total = 0;
             for prob = 1:obj.NumProbs
                 ThisProbName = obj.ProblemNames(prob);
                 probMask = ThisProbName == obj.tbl.Problem;
+
                 % Get criteria points and student scores
-                critPoints = obj.tbl(probMask, "CriteriaPoints");
-                studentPoints = obj.tbl(probMask, student).PointsEarned;
+                critPoints = obj.tbl{probMask, "CriteriaPoints"};
+                studentPoints = obj.tbl{probMask, student}.PointsEarned;
+
                 % Stats
                 TotalPoints = sum(critPoints);
                 TotalEarned = sum(studentPoints, 'omitmissing');
                 TotalPerc = 100*TotalEarned/TotalPoints;
                 LetterGrade = obj.GetLetterGrade(TotalPerc);
+
                 % Package into structure
                 info.probs(prob).Name = ThisProbName;
                 info.probs(prob).Weight = obj.tbl.ProblemWeight( find(probMask, 1, 'first') );
@@ -161,7 +163,7 @@ classdef Rubric
                 Total = Total + info.probs(prob).Weight * TotalPerc;
             end
             info.Total = Total;
-            info.TotalLetterGrade = GetLetterGrade(Total);
+            info.TotalLetterGrade = obj.GetLetterGrade(Total);
             
         end
         function LG = GetLetterGrade(obj,score)
@@ -177,15 +179,15 @@ classdef Rubric
             end
         end
         function points = GetCriteriaPoints(obj, itemID)
+            % Returns the total amount of points for this criteria item
             RowNum = find(obj.tbl.ItemID == itemID);
             if isempty(RowNum)
                 error("GetCriteriaPoints: itemID (%d) does not exist.", itemID)
             end
             points = obj.tbl.CriteriaPoints(RowNum);
         end
-
-        % Data Manipulation
         function score = GetScore(obj, student, itemID)
+            % Returns the student's score for a particular criteria item
             arguments
                 obj Rubric
                 student string
@@ -219,6 +221,16 @@ classdef Rubric
             % get fb from table
             feedback = obj.tbl.(student).Feedback(RowNum);
         end
+        function probTbl = GetProblem(obj, student, problem)
+            % Returns a table pruned for this subject and problem
+            probMask = problem == obj.tbl.Problem;
+            if isempty(probMask)
+                error("Problem %s does not exist", problem)
+            end
+            probTbl = [obj.tbl(probMask, 1:obj.NumDataColumns), obj.tbl{probMask, student}];
+        end
+
+        % Data Manipulation
         function obj = ChangeScore(obj, student, itemID, score)
             % NO PROTECTIONS for scores below zero or above max points
             %   This allows for penalties and extra credit implementations.
@@ -259,35 +271,6 @@ classdef Rubric
         end
     
         % Rubric-wide Manipulation
-        function obj = ChangeRubricCriteriaPoints_GUI(obj, itemID)
-            % A GUI frontend for the ChangeRubricCriteriaPoints method.
-
-            TitleFontSize = 16;
-            TextFontSize = 14; % includes button size
-            WindowSize = [400 400];
-
-            thisfig = uifigure(...
-                'visible',      'off',...
-                'windowstyle',  'modal',...
-                'name',         "Change Criteria Points",...
-                'position',     [0 0 WindowSize],...
-                'resize',       'off',...
-                'AutoResizeChildren', 'off',...
-                'Icon',         fullfile('Graphics','iconLarge.png'));
-
-            OldUnits = thisfig.Units;
-            thisfig.Units = "pixels";
-            %AppPos = app.Position;
-            thisfig.Units = OldUnits;
-            % Reposition this figure to be on top of app figure
-            %movegui(thisfig, [AppPos(1)+(AppPos(3)-WindowSize(1))/2, AppPos(2)+(AppPos(4)-WindowSize(2))/2])
-            movegui(thisfig, 'center')
-
-            
-
-            
-
-        end
         function obj = ChangeRubricCriteriaPoints(obj, itemID, newScore, method)
             % Method used to change the CriteriaPoints field during
             % grading.
@@ -364,26 +347,63 @@ classdef Rubric
             obj.tbl.CriteriaPoints(RowNum) = newScore;
 
         end
-        function [OutPerc, CriteriaPoints] = PercGrid(obj)
+        function [pt_data, perc_data] = AllScores(obj)
             % Provides a numeric array of criteria percentages with each
             % row being a criteria item and each column being a student.
             % These data can be used for a heat-map.
             
-            data = NaN(height(obj.tbl), obj.NumStudents);
+            pt_data = NaN(height(obj.tbl), obj.NumStudents);
+            perc_data = pt_data;
             % For all students, extract their scores and save to standard
             % numeric array.
             for ind = 1:obj.NumStudents
                 st = obj.StudentNames(ind);
-                data(:,ind) = obj.tbl.(st).PointsEarned ./ obj.tbl.CriteriaPoints;
-            end
-
-            if nargout == 1
-                OutPerc = data;
-            elseif nargout == 2
-                OutPerc = data;
-                CriteriaPoints = obj.tbl.CriteriaPoints;
+                pt_data(:,ind) = obj.tbl.(st).PointsEarned;
+                perc_data(:,ind) = pt_data(:,ind) ./ obj.tbl.CriteriaPoints;
             end
         end
+        function obj = LoadGrid(obj, pt_data)
+            % User can provide a point-value grid to overwrite all student
+            % score data. THIS IS NOT TO BE USED BY REGULAR USERS!
+            
+            % For each student, load the entire column of grade data
+            for ind = 1:obj.NumStudents
+                st = obj.StudentNames(ind);
+                obj.tbl.(st).PointsEarned = pt_data(:,ind);
+            end
+        end
+        
+        % Sub GUIs
+        function obj = ChangeRubricCriteriaPoints_GUI(obj, itemID)
+            % A GUI frontend for the ChangeRubricCriteriaPoints method.
+
+            TitleFontSize = 16;
+            TextFontSize = 14; % includes button size
+            WindowSize = [400 400];
+
+            thisfig = uifigure(...
+                'visible',      'off',...
+                'windowstyle',  'modal',...
+                'name',         "Change Criteria Points",...
+                'position',     [0 0 WindowSize],...
+                'resize',       'off',...
+                'AutoResizeChildren', 'off',...
+                'Icon',         fullfile('Graphics','iconLarge.png'));
+
+            %OldUnits = app.Units;
+            %app.Units = "pixels";
+            %AppPos = app.Position;
+            %app.Units = OldUnits;
+            % Reposition this figure to be on top of app figure
+            %movegui(thisfig, [AppPos(1)+(AppPos(3)-WindowSize(1))/2, AppPos(2)+(AppPos(4)-WindowSize(2))/2])
+            movegui(thisfig, 'center')
+
+            
+
+            
+
+        end
+        
     end
 
     %% Static Methods
