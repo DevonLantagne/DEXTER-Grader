@@ -38,6 +38,7 @@ classdef DEXTER < matlab.apps.AppBase
         
         m_export	        matlab.ui.container.Menu
         m_export_stu	    matlab.ui.container.Menu
+        m_export_clipboard  matlab.ui.container.Menu
         m_export_all_txt	matlab.ui.container.Menu
         m_export_all_pdf	matlab.ui.container.Menu
 
@@ -419,6 +420,9 @@ classdef DEXTER < matlab.apps.AppBase
             ShowReport(app)
         end
 
+        function cb_ExportStudentClipboard(app)
+            app.Clipboard_StudentFB();
+        end
         function cb_ExportStudent(app, ~)
             filter = {'*.pdf'; '*.txt'};
             ValidExtensions = extractAfter(string(filter), "*");
@@ -891,6 +895,9 @@ classdef DEXTER < matlab.apps.AppBase
             app.m_export = uimenu(app.fig, "Text", "Export", "Enable", "off");
             app.m_export_stu = uimenu(app.m_export, "Text", "This student...", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportStudent), ...
+                "Tooltip", app.tooltips.m_exportStudent,"Separator", "off");
+            app.m_export_clipboard = uimenu(app.m_export, "Text", "This student to clipboard", ...
+                "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportStudentClipboard), ...
                 "Tooltip", app.tooltips.m_exportStudent,"Separator", "on");
             app.m_export_all_txt = uimenu(app.m_export, "Text", "All students (.txt)...", ...
                 "MenuSelectedFcn", createCallbackFcn(app, @cb_ExportAll, true), ...
@@ -920,6 +927,11 @@ classdef DEXTER < matlab.apps.AppBase
             tblRow = app.CurRubric(ItemMask, :);
         end
 
+        function Clipboard_StudentFB(app)
+            ThisTbl = app.StTbl(app.CurSt, :);
+            ReportString = app.GenerateReportString(ThisTbl);
+            clipboard('copy',ReportString)
+        end
         function ExportStudent(app, ScoreTbl, DestFolder, method)
             if nargin < 4
                 method = ".pdf";
