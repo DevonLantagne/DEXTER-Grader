@@ -1,2 +1,4 @@
 *.asv
 *.dex
+build/executables/
+build/appOutput/
