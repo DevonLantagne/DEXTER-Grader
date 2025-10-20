@@ -7,68 +7,68 @@ classdef DEXTER < matlab.apps.AppBase
     % App components visible to other code (and Command Window)
     properties (Access = public)
         % Main Grader Figure
-        fig				    matlab.ui.Figure
+        fig				        matlab.ui.Figure
 
-        WelcomeContainer    matlab.ui.container.GridLayout
-        WelcomeText		    matlab.ui.control.Label
+        WelcomeContainer        matlab.ui.container.GridLayout
+        WelcomeText		        matlab.ui.control.Label
 
-        m_file			    matlab.ui.container.Menu
-        m_file_new		    matlab.ui.container.Menu
-        m_file_open		    matlab.ui.container.Menu
-        m_file_save		    matlab.ui.container.Menu
-        m_file_saveas	    matlab.ui.container.Menu
-        m_file_enableAutoSave matlab.ui.container.Menu
-        m_file_settings	    matlab.ui.container.Menu
+        m_file			        matlab.ui.container.Menu
+        m_file_new		        matlab.ui.container.Menu
+        m_file_open		        matlab.ui.container.Menu
+        m_file_save		        matlab.ui.container.Menu
+        m_file_saveas	        matlab.ui.container.Menu
+        m_file_enableAutoSave   matlab.ui.container.Menu
+        m_file_settings	        matlab.ui.container.Menu
 
-        m_edit              matlab.ui.container.Menu
-        m_edit_classlist    matlab.ui.container.Menu
-        m_edit_usersettings matlab.ui.container.Menu
+        m_edit                  matlab.ui.container.Menu
+        m_edit_classlist        matlab.ui.container.Menu
+        m_edit_usersettings     matlab.ui.container.Menu
 
-        m_view			    matlab.ui.container.Menu
+        m_view			        matlab.ui.container.Menu
         m_view_sort
         m_view_sort_firstascend
         m_view_sort_firstdescend
         m_view_sort_lastascend
         m_view_sort_lastdescend
-        m_view_increaseItem matlab.ui.container.Menu
-        m_view_decreaseItem matlab.ui.container.Menu
+        m_view_increaseItem     matlab.ui.container.Menu
+        m_view_decreaseItem     matlab.ui.container.Menu
 
-        m_reports	        matlab.ui.container.Menu
-        m_reports_class     matlab.ui.container.Menu
+        m_reports	            matlab.ui.container.Menu
+        m_reports_class         matlab.ui.container.Menu
         
-        m_export	        matlab.ui.container.Menu
-        m_export_stu	    matlab.ui.container.Menu
-        m_export_clipboard  matlab.ui.container.Menu
-        m_export_all_txt	matlab.ui.container.Menu
-        m_export_all_pdf	matlab.ui.container.Menu
+        m_export	            matlab.ui.container.Menu
+        m_export_stu	        matlab.ui.container.Menu
+        m_export_clipboard      matlab.ui.container.Menu
+        m_export_all_txt	    matlab.ui.container.Menu
+        m_export_all_pdf	    matlab.ui.container.Menu
 
-        m_about             matlab.ui.container.Menu
-        m_about_version     matlab.ui.container.Menu
-        m_about_help        matlab.ui.container.Menu
+        m_about                 matlab.ui.container.Menu
+        m_about_version         matlab.ui.container.Menu
+        m_about_help            matlab.ui.container.Menu
 
-        MainGrid		    matlab.ui.container.GridLayout
-        TopSubGrid		    matlab.ui.container.GridLayout
-        TopGridRight	    matlab.ui.container.GridLayout
-        RubricText		    matlab.ui.control.Label
-        SectionText		    matlab.ui.control.Label
-        TopGridLeft		    matlab.ui.container.GridLayout
+        MainGrid		        matlab.ui.container.GridLayout
+        TopSubGrid		        matlab.ui.container.GridLayout
+        TopGridRight	        matlab.ui.container.GridLayout
+        RubricText		        matlab.ui.control.Label
+        SectionText		        matlab.ui.control.Label
+        TopGridLeft		        matlab.ui.container.GridLayout
         StudentDropdown
-        StudentTotal	    matlab.ui.control.Label
+        StudentTotal	        matlab.ui.control.Label
 
-        ItemMainGrid	    matlab.ui.container.GridLayout
-        ItemHeaderGrid	    matlab.ui.container.GridLayout
-        ItemProblemText     matlab.ui.control.Label
+        ItemMainGrid	        matlab.ui.container.GridLayout
+        ItemHeaderGrid	        matlab.ui.container.GridLayout
+        ItemProblemText         matlab.ui.control.Label
         ProblemList
 
-        ItemGrid		    matlab.ui.container.GridLayout
-        ItemSpins		    matlab.ui.control.Spinner
-        ItemBtns		    matlab.ui.control.StateButton
-        ItemParts		    matlab.ui.control.Label
-        ItemTexts		    matlab.ui.control.Label
-        ItemFBBtns          matlab.ui.control.Button
+        ItemGrid		        matlab.ui.container.GridLayout
+        ItemSpins		        matlab.ui.control.Spinner
+        ItemBtns		        matlab.ui.control.StateButton
+        ItemParts		        matlab.ui.control.Label
+        ItemTexts		        matlab.ui.control.Label
+        ItemFBBtns              matlab.ui.control.Button
 
         % Aux Figures
-        CRfig               matlab.ui.Figure
+        CRfig                   matlab.ui.Figure
 
     end
 
@@ -131,7 +131,7 @@ classdef DEXTER < matlab.apps.AppBase
 
         window_name = "DEXTER Grader"
 
-        webHelpLink = "https://msoe365.sharepoint.com/:b:/r/sites/DEXTERGraderDevelopment-Community/Shared%20Documents/General/Docs%20and%20Tutorials/User%20Guide.pdf?csf=1&web=1&e=5t3pdU"
+        webHelpLink = "https://github.com/DevonLantagne/DEXTER-Grader/blob/main/docs/usage.md"
 
     end
 
@@ -1065,8 +1065,8 @@ classdef DEXTER < matlab.apps.AppBase
 
                 % Print problem header
                 titleRow = TableRow();
-                titlePara = Paragraph(sprintf("%s: %.1f / %.1f = %.1f%% (%s)", ...
-                    app.ProblemNames(p), Earned, OutOf, 100*Earned/OutOf, LG));
+                titlePara = Paragraph(sprintf("%s (%.1f %% of total): %.1f / %.1f = %.1f%% (%s)", ...
+                    app.ProblemNames(p), probRub.ProblemWeight(1)*100, Earned, OutOf, 100*Earned/OutOf, LG));
                 titlePara.Style = {Bold(true), FontSize('12pt')};
                 append(titleRow, TableEntry(titlePara));
                 append(rubTbl, titleRow);
