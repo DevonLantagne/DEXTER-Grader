@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a bug in DEXTER Grader
+title: "[BUG] "
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Bug Report
+        Please provide enough detail to reproduce the problem. If possible, include example input/output.
+
+  - type: checkboxes
+    id: features
+    attributes:
+      label: Features affected
+      options:
+        - UI display
+        - Grade calculation
+        - Starting a new project
+        - Opening an existing project
+        - Reports and Exports
+
+  - type: input
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: "Describe how to reproduce the issue."
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Describe what you expected to happen
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Describe what actually happened
+
+  - type: input
+    id: app_version
+    attributes:
+      label: App version
+      description: "What version of the app are you using? If on the dev branch, what commit hash?"
+      placeholder: e.g., 1.1.3
+
+  - type: radio
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - 🔴 Critical (system crash or data corruption)
+        - 🟠 Major (unusable, breaking workflow, disruptive)
+        - 🟢 Minor (typo, wrong output, logging issue)

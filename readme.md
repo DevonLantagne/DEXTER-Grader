@@ -12,6 +12,10 @@ DEXTER is a "standalone" MATLAB App. To use a standalone MATLAB app, you need th
     </picture>
 </p>
 
+## Bug Reporting and Feature Requests
+
+Please see this repo's ***Issues*** tab and open a `Bug Report` or `Feature Request` using the forms.
+
 ## Installation
 
 Visit the [Releases](https://github.com/DevonLantagne/DEXTER-Grader/releases) pages for all versions. Scroll to the bottom of a release to Assets and download the installer. This will also install dependencies such as the MATLAB Runtime.
