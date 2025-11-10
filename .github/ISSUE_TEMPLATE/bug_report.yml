@@ -56,4 +56,4 @@ body:
         - 🔴 Critical (system crash or data corruption)
         - 🟠 Major (unusable, breaking workflow, disruptive)
         - 🟢 Minor (typo, wrong output, logging issue)
-    default: 3
+      default: 3
