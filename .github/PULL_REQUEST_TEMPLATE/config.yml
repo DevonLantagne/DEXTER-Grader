@@ -1,0 +1,6 @@
+default_template: pr_template.md
+blank_issues_enabled: false
+contact_links:
+  - name: "General PR"
+    about: "General template for pull requests"
+    template: pr_template.md

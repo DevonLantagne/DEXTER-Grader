@@ -1,0 +1,27 @@
+name: "General Feature Request"
+description: "Suggest a new capability, workflow improvement, or enhancement."
+labels: ["feature", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Feature Request
+        For any improvement not tied to a specific API endpoint.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: "Describe what you want to see added or improved."
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivation"
+      description: "Why is this feature valuable?"
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "Proposed Solution"
+      description: "If you have a vision for how it should work, describe it here."
