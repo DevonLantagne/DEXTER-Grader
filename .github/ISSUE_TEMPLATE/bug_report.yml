@@ -1,7 +1,8 @@
 name: Bug report
 description: Report a bug in DEXTER Grader
 title: "[BUG] "
-labels: bug
+labels: "bug"
+tyle: "bug"
 body:
   - type: markdown
     attributes:
