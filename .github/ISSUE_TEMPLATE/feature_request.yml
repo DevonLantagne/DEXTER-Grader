@@ -1,12 +1,14 @@
-name: "General Feature Request"
+name: "Feature Request"
 description: "Suggest a new capability, workflow improvement, or enhancement."
+title: "[FEATURE] "
 labels: ["feature", "enhancement"]
+tyle: "feature"
 body:
   - type: markdown
     attributes:
       value: |
         ### Feature Request
-        For any improvement not tied to a specific API endpoint.
+        Fill out this form to share your ideas for a few feature in DEXTER Grader.
 
   - type: textarea
     id: summary
