@@ -1,0 +1,46 @@
+function createCriteriaList(app)
+
+    app.ItemGrid = uigridlayout(app.ItemMainGrid, [app.cfg.NumMaxItems,5], ...
+        "ColumnWidth", {'fit', 'fit', 'fit', '1x', 'fit'}, ...
+        "Padding",[0 10 0 10], ...
+        "Scrollable", "on", ...
+        "RowHeight", repmat({'fit'}, app.cfg.NumMaxItems,1));
+
+    for row = 1:app.cfg.NumMaxItems
+        % Col 1 (spinner)
+        app.ItemSpins(row) = uispinner(app.ItemGrid, ...
+            "value", 0,...
+            "ValueChangedFcn", createCallbackFcn(app, @cb_change_score, true),...
+            "UserData", row,...
+            "FontWeight", "bold");
+        app.ItemSpins(row).Layout.Row = row;
+        app.ItemSpins(row).Layout.Column = 1;
+
+        % Col 2 (full pt btn)
+        app.ItemBtns(row) = uibutton(app.ItemGrid, "state", "Text", "+X.X",'value',false,...
+            "ValueChangedFcn",createCallbackFcn(app, @cb_change_score, true),...
+            "UserData",row);
+        app.ItemBtns(row).Layout.Row = row;
+        app.ItemBtns(row).Layout.Column = 2;
+
+        app.ItemParts(row) = uilabel(app.ItemGrid, "WordWrap", "off", ...
+            "text", "a) ");
+        app.ItemParts(row).Layout.Row = row;
+        app.ItemParts(row).Layout.Column = 3;
+
+        % Col 4 (criteria description)
+        app.ItemTexts(row) = uilabel(app.ItemGrid, "WordWrap", "on", ...
+            "text", "test");
+        app.ItemTexts(row).Layout.Row = row;
+        app.ItemTexts(row).Layout.Column = 4;
+
+        % Col 5 (criteria feedback comments)
+        app.ItemFBBtns(row) = uibutton(app.ItemGrid, "push", "Text", "FdBk",...
+            "ButtonPushedFcn",createCallbackFcn(app, @cb_addFB, true),...
+            "UserData",row);
+        app.ItemFBBtns(row).Layout.Row = row;
+        app.ItemFBBtns(row).Layout.Column = 5;
+
+    end
+    set(allchild(app.ItemGrid),'fontsize',app.user.FontSizeBody)
+end
