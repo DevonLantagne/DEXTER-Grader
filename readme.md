@@ -38,7 +38,11 @@ If you already have MATLAB on your system, you can clone or download this reposi
 ```
 
 > [!NOTE]
-> This repository is also compatible with VS Code and the MATLAB extension if you would rather use the MATLAB engine through a different editor. When this repo is opened in VS Code, it will recommend extensions for this repo (including the MATLAB extension).
+> This repository is also compatible with VS Code and the MATLAB extension if you would rather use the MATLAB engine through a different editor.
+>
+> When this repo is opened in VS Code, it will recommend extensions for this repo (including the MATLAB extension). You can then open a MATLAB terminal in VS Code and run `DEXTER`.
+>
+> MATLAB will see the `startup.m` script and execute it when the workspace is opened (which adds this repo to your path temporarily). You may have to close and reopen the MATLAB terminal for the `startup.m` to take effect, otherwise you can run the script manually by typing `startup` in the MATLAB terminal.
 
 ## Documentation
 
