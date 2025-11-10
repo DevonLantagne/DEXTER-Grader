@@ -2,9 +2,9 @@
 
 DEXTER Grader (DEXTER) is a grading calculator and gradebook manager. DEXTER’s main goal is to improve the efficiency and consistency of grading. The secondary goal of DEXTER is to provide insights into student performance. 
 
-This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the User Guide on how to find, create, or format these files.
+This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the [User Guide](docs/usage.md) on how to find, create, or format these files.
 
-DEXTER is a "standalone" MATLAB App. To use a standalone MATLAB app, you need the MATLAB Runtime. When you install DEXTER, the runtime will also be installed if it is not already on your computer. DEXTER is currently only supported on Windows OS.
+DEXTER is currently only supported on Windows OS.
 
 <p align="center">
     <picture>
@@ -14,14 +14,28 @@ DEXTER is a "standalone" MATLAB App. To use a standalone MATLAB app, you need th
 
 ## Bug Reporting and Feature Requests
 
-Please see this repo's ***Issues*** tab and open a `Bug Report` or `Feature Request` using the forms.
+- [Click here to report a bug](https://github.com/DevonLantagne/DEXTER-Grader/issues/new?template=bug_report.yml)
+- [Click here to request a new feature](https://github.com/DevonLantagne/DEXTER-Grader/issues/new?template=feature_request.yml)
 
 ## Installation
 
-Visit the [Releases](https://github.com/DevonLantagne/DEXTER-Grader/releases) pages for all versions. Scroll to the bottom of a release to Assets and download the installer. This will also install dependencies such as the MATLAB Runtime.
+There are two ways to run DEXTER Grader: as a standalone MATLAB package using the MATLAB Runtime; or directly in MATLAB. Both methods are described below.
 
 > [!IMPORTANT]
-> DEXTER Grader is only supported on Windows OS.
+> DEXTER Grader is only supported on Windows OS. If you are a MacOS user, please open a feature request for the OS support.
+
+### Standalone + MATLAB Runtime
+
+DEXTER is packaged as a "standalone" MATLAB App. To use a standalone MATLAB app, you need the MATLAB Runtime (not full MATLAB or license). When you install DEXTER, the runtime will also be installed if it is not already on your computer. 
+
+Visit the [Releases](https://github.com/DevonLantagne/DEXTER-Grader/releases) pages for all versions. Scroll to the bottom of a release to Assets and download the installer. This will also install dependencies such as the MATLAB Runtime.
+
+### MATLAB Source
+
+If you already have MATLAB on your system, you can clone or download this repository and add the `/src` directory to your MATLAB path. This will allow you to call the DEXTER app from the command window:
+```matlab
+>> DEXTER
+```
 
 ## Documentation
 
