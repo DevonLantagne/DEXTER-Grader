@@ -9,6 +9,7 @@ body:
     attributes:
       value: |
         ### Bug Report
+        Use this form to report bugs or unexpected behavior in the app.
         Please provide enough detail to reproduce the problem. If possible, include example input/output.
 
   - type: checkboxes
@@ -21,24 +22,6 @@ body:
         - label: Starting a new project
         - label: Opening an existing project
         - label: Reports and Exports
-
-  - type: input
-    id: steps
-    attributes:
-      label: Steps to reproduce
-      description: "Describe how to reproduce the issue."
-
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected behavior
-      description: Describe what you expected to happen
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual behavior
-      description: Describe what actually happened
 
   - type: input
     id: app_version
@@ -55,4 +38,15 @@ body:
         - 🔴 Critical (system crash or data corruption)
         - 🟠 Major (unusable, breaking workflow, disruptive)
         - 🟢 Minor (typo, wrong output, logging issue)
-      default: 2
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: "Describe the problem. What did you expect to happen?"
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: "Describe how to reproduce the issue. Consider uploading files, screenshots, or logs."
