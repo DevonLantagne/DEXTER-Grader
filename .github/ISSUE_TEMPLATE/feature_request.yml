@@ -1,6 +1,6 @@
 name: "Feature Request"
 description: "Suggest a new capability, workflow improvement, or enhancement."
-title: "[FEATURE] "
+title: "[FEATURE] <title>"
 labels: ["feature", "enhancement"]
 type: feature
 assignees:
