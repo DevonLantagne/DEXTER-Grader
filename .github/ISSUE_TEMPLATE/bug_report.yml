@@ -2,7 +2,7 @@ name: Bug report
 description: Report a bug in DEXTER Grader
 title: "[BUG] "
 labels: ["bug"]
-tyle: bug
+type: bug
 assignees:
   - DevonLantagne
 body:

@@ -2,7 +2,7 @@ name: "Feature Request"
 description: "Suggest a new capability, workflow improvement, or enhancement."
 title: "[FEATURE] "
 labels: ["feature", "enhancement"]
-tyle: feature
+type: feature
 assignees:
   - DevonLantagne
 body:
