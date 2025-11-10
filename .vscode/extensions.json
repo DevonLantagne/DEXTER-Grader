@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "MathWorks.language-matlab",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+    "hnw.vscode-auto-open-markdown-preview",
+    "bierner.github-markdown-preview",
+    "yahyabatulu.vscode-markdown-alert"
+  ]
+}
