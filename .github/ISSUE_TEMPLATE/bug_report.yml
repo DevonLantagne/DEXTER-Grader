@@ -2,7 +2,6 @@ name: Bug report
 description: Report a bug in DEXTER Grader
 title: "[BUG] <title>"
 labels: ["bug"]
-type: bug
 assignees:
   - DevonLantagne
 body:
@@ -56,4 +55,4 @@ body:
         - 🔴 Critical (system crash or data corruption)
         - 🟠 Major (unusable, breaking workflow, disruptive)
         - 🟢 Minor (typo, wrong output, logging issue)
-      default: 3
+      default: 2
