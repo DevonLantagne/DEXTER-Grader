@@ -1,0 +1,5 @@
+{
+    "terminal.integrated.defaultProfile.windows": "MATLAB",
+    "MATLAB.defaultEditor": true,
+    "MATLAB.startDebuggerAutomatically": true
+}
