@@ -37,6 +37,9 @@ If you already have MATLAB on your system, you can clone or download this reposi
 >> DEXTER
 ```
 
+> [!NOTE]
+> This repository is also compatible with VS Code and the MATLAB extension if you would rather use the MATLAB engine through a different editor. When this repo is opened in VS Code, it will recommend extensions for this repo (including the MATLAB extension).
+
 ## Documentation
 
 Vist the [documentation page](docs/usage.md) for getting started and exploring DEXTER features.
