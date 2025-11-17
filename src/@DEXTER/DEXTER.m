@@ -131,7 +131,7 @@ classdef DEXTER < matlab.apps.AppBase
 
         window_name = "DEXTER Grader"
 
-        webHelpLink = "https://github.com/DevonLantagne/DEXTER-Grader/blob/main/docs/usage.md"
+        webHelpLink = "https://github.com/DevonLantagne/DEXTER-Grader/wiki"
 
     end
 
