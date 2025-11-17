@@ -113,7 +113,7 @@ classdef DEXTER < matlab.apps.AppBase
     end
     properties (Constant)
 
-        version = "1.3.1"
+        version = "1.3.2"
 
         tooltips = struct(...
             "m_new",            "Start a new DEXTER Grader project", ...
@@ -138,7 +138,6 @@ classdef DEXTER < matlab.apps.AppBase
     %% CONSTRUCTOR
 
     methods (Access = public)
-
         function app = DEXTER(SaveStateFile)
             %DEXTER Runs the Dexter Grader app
 
@@ -255,6 +254,7 @@ classdef DEXTER < matlab.apps.AppBase
             out = unique(AllComments);
 
         end
+
     end
 
     %% Main GUI Callbacks
@@ -492,7 +492,7 @@ classdef DEXTER < matlab.apps.AppBase
             app.m_export.Enable = "on";
             app.m_file_enableAutoSave.Enable = "on";
             app.m_view.Enable = "on";
-            app.m_edit_classlist.Enable = "on";
+            app.m_edit.Enable = "on";
 
         end
         function SaveState(app, PathAndFilename)
@@ -842,6 +842,16 @@ classdef DEXTER < matlab.apps.AppBase
 
     %% Public Tools
     methods (Access = public, Static)
+
+        function out = GetGraphicsPath()
+            % Returns the path to find graphics files depending on dev or
+            % prod environment
+            if isdeployed
+                out = fullfile(ctfroot, "graphics");
+            else
+                out = fullfile(pwd, "src", "graphics");
+            end
+        end
 
         function path = DexterPath()
             % Returns the file location of this file
