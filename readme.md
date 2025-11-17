@@ -2,7 +2,7 @@
 
 DEXTER Grader (DEXTER) is a grading calculator and gradebook manager. DEXTER’s main goal is to improve the efficiency and consistency of grading. The secondary goal of DEXTER is to provide insights into student performance. 
 
-This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the [User Guide](docs/usage.md) on how to find, create, or format these files.
+This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the [DEXTER Wiki](https://github.com/DevonLantagne/DEXTER-Grader/wiki) on how to find, create, or format these files.
 
 DEXTER is currently only supported on Windows OS.
 
@@ -26,9 +26,11 @@ There are two ways to run DEXTER Grader: as a standalone MATLAB package using th
 
 ### Standalone + MATLAB Runtime
 
+For users that don't have MATLAB on their machine or are worried about version mismatches.
+
 DEXTER is packaged as a "standalone" MATLAB App. To use a standalone MATLAB app, you need the MATLAB Runtime (not full MATLAB or license). When you install DEXTER, the runtime will also be installed if it is not already on your computer. 
 
-Visit the [Releases](https://github.com/DevonLantagne/DEXTER-Grader/releases) pages for all versions. Scroll to the bottom of a release to Assets and download the installer. This will also install dependencies such as the MATLAB Runtime.
+Visit the [Releases](https://github.com/DevonLantagne/DEXTER-Grader/releases) page for all versions. Scroll to the bottom of a release to Assets and download the installer. This will also install dependencies such as the MATLAB Runtime.
 
 ### MATLAB Source
 
@@ -39,7 +41,7 @@ If you already have MATLAB on your system, you can clone or download this reposi
 
 ## Documentation
 
-Vist the [documentation page](docs/usage.md) for getting started and exploring DEXTER features.
+Vist the [wiki](https://github.com/DevonLantagne/DEXTER-Grader/wiki) for getting started and exploring DEXTER features.
 
 ## Features
 
