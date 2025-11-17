@@ -2,6 +2,7 @@ function createMenubar(app)
     % Creates the menubar
 
     app.m_file = uimenu(app.fig, "Text", "File");
+
     app.m_file_new = uimenu(app.m_file, "Text", "New Project...", "Accelerator", "N", ...
         "MenuSelectedFcn", createCallbackFcn(app, @cb_New), ...
         "Tooltip", app.tooltips.m_new);
@@ -19,14 +20,16 @@ function createMenubar(app)
         "Tooltip", app.tooltips.m_enableAutosave,...
         "Separator", "on");
 
-    app.m_edit = uimenu(app.fig, "Text", "Edit");
+    app.m_edit = uimenu(app.fig, "Text", "Edit", "enable", "off");
+
     app.m_edit_classlist = uimenu(app.m_edit, "Text", "Class List...", ...
         "MenuSelectedFcn", createCallbackFcn(app, @cb_changeClassList), ...
-        "Tooltip", app.tooltips.m_edit_classlist, "enable", "off");
+        "Tooltip", app.tooltips.m_edit_classlist);
     app.m_edit_usersettings = uimenu(app.m_edit, "Text", "User Settings...",...
         "MenuSelectedFcn", createCallbackFcn(app, @cb_changeSettings));
 
     app.m_view = uimenu(app.fig, "Text", "View", "Enable","off");
+
     app.m_view_sort = uimenu(app.m_view, "Text", "Sort Students");
     app.m_view_sort_firstascend = uimenu(app.m_view_sort, "Text", "First Name A to Z", ...
         "UserData", ["FirstName","ascend"], "MenuSelectedFcn", createCallbackFcn(app, @cb_sortStudents, true), ...
