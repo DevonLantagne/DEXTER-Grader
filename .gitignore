@@ -2,3 +2,6 @@
 *.dex
 build/executables/
 build/appOutput/
+
+# MS Office autosaves
+~$*
