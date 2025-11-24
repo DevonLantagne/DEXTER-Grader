@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Update Canvas-MATLAB subtree",
+            "type": "shell",
+            "command": "git subtree pull --prefix=canvas-matlab https://github.com/DevonLantagne/canvas-matlab.git main --squash",
+            "problemMatcher": []
+        }
+    ]
+}
