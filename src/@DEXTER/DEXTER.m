@@ -39,6 +39,7 @@ classdef DEXTER < matlab.apps.AppBase
         m_export	            matlab.ui.container.Menu
         m_export_stu	        matlab.ui.container.Menu
         m_export_clipboard      matlab.ui.container.Menu
+        m_export_markdown_clipboard matlab.ui.container.Menu
         m_export_all_txt	    matlab.ui.container.Menu
         m_export_all_pdf	    matlab.ui.container.Menu
 
@@ -126,6 +127,7 @@ classdef DEXTER < matlab.apps.AppBase
             "m_edit_classlist", "Opens a window to change the names of students.",...
             "m_classwide",      "Opens a new window showing a summary of class performance on the assignment",...
             "m_exportStudent",  ["Generate a grade printout for the selected student."; "You can specify .txt or .pdf when prompted for the file name."],...
+            "m_exportStudentMarkdown", "Copies a Markdown report of the student to your clipboard to be pasted into a .md file.",...
             "m_exportAlltxt",   ["Select a folder to receive generated grade printouts for all students";"Generates .txt files."],...
             "m_exportAllpdf",   ["Select a folder to receive generated grade printouts for all students";"Generates .pdf files."])
 
@@ -427,6 +429,9 @@ classdef DEXTER < matlab.apps.AppBase
         function cb_ExportStudentClipboard(app)
             app.Clipboard_StudentFB();
         end
+        function cb_ExportStudentMarkdownClipboard(app)
+            app.ClipboardMarkdown_StudentFB();
+        end
         function cb_ExportStudent(app, ~)
             filter = {'*.pdf'; '*.txt'};
             ValidExtensions = extractAfter(string(filter), "*");
@@ -555,6 +560,11 @@ classdef DEXTER < matlab.apps.AppBase
         function Clipboard_StudentFB(app)
             ThisTbl = app.StTbl(app.CurSt, :);
             ReportString = app.GenerateReportString(ThisTbl);
+            clipboard('copy',ReportString)
+        end
+        function ClipboardMarkdown_StudentFB(app)
+            ThisTbl = app.StTbl(app.CurSt, :);
+            ReportString = app.GenerateReportStringMarkdown(ThisTbl);
             clipboard('copy',ReportString)
         end
 
