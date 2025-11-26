@@ -21,11 +21,11 @@ opts.ExecutableVersion = dexter_version;
 opts.Verbose = "on";
 opts.OutputDir = fullfile("..","build","appOutput");
 opts.ExecutableSplashScreen = fullfile("..","build","graphics","splash.png");
-opts.ExecutableIcon = fullfile("..","build","graphics","icon.png");
+opts.ExecutableIcon = fullfile("..","build","graphics","icon_dg_64x64.png");
 
-opts.AdditionalFiles = { char(fullfile("..","build","graphics","iconLarge.png")) };
+opts.AdditionalFiles = { char(fullfile("..","build","graphics","icon_dg_48x48.png")) };
 
-results = compiler.build.standaloneApplication(opts); % results will be used below
+results = compiler.build.standaloneApplication(opts); % 'results' will be used below
 
 fprintf("\nBuild Complete!\n\n")
 
@@ -46,7 +46,7 @@ pack_opts.Description = "DEXTER Grader (DEXTER) is a grading calculator and grad
 pack_opts.Version = dexter_version;
 pack_opts.InstallerLogo = fullfile("..","build","graphics","InstallTall.png"); % 112x290 px
 pack_opts.InstallerSplash = fullfile("..","build","graphics","splash.png");
-pack_opts.InstallerIcon = fullfile("..","build","graphics","icon.png"); % 48x48
+pack_opts.InstallerIcon = fullfile("..","build","graphics","icon_dg_48x48.png"); % 48x48
 pack_opts.InstallerName = "DEXTER_installer_" + strrep(dexter_version,".","_");
 pack_opts.OutputDir = fullfile("..","build","executables");
 pack_opts.Verbose = "on";

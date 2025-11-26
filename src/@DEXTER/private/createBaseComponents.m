@@ -10,7 +10,7 @@ function createBaseComponents(app)
         'AutoResizeChildren', 'off',...
         'WindowKeyPressFcn', createCallbackFcn(app, @cb_keypress, true),...
         "CloseRequestFcn", createCallbackFcn(app, @cb_dexFigClose));
-    app.fig.Icon = fullfile(app.GetGraphicsPath,'iconLarge.png');
+    app.fig.Icon = fullfile(app.GetGraphicsPath, app.app_icon);
     if app.Debug; app.fig.Visible = "on"; end
     
     % Welome Text

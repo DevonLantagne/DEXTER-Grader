@@ -130,6 +130,7 @@ classdef DEXTER < matlab.apps.AppBase
             "m_exportAllpdf",   ["Select a folder to receive generated grade printouts for all students";"Generates .pdf files."])
 
         window_name = "DEXTER Grader"
+        app_icon = "icon_dg_48x48.png"
 
         webHelpLink = "https://github.com/DevonLantagne/DEXTER-Grader/wiki"
 
@@ -844,13 +845,27 @@ classdef DEXTER < matlab.apps.AppBase
     methods (Access = public, Static)
 
         function out = GetGraphicsPath()
-            % Returns the path to find graphics files depending on dev or
-            % prod environment
-            if isdeployed
-                out = fullfile(ctfroot, "graphics");
+            % Returns the path to find graphics files depending on dev or prod environment
+        % 
+        % In development: returns relative path from src folder
+        % In deployed mode: uses 'which' to locate files in ctfroot
+        
+        if isdeployed
+            % Try to find a specific graphics file (e.g., icon.png) using which()
+            % which() is more reliable for files in the deployable archive
+            graphicsFile = which(DEXTER.app_icon);
+            
+            if ~isempty(graphicsFile)
+                % Extract directory from the full path
+                out = fileparts(graphicsFile);
             else
-                out = fullfile(pwd, "src", "graphics");
+                % Fallback to ctfroot if which() doesn't work
+                out = fullfile(ctfroot);
             end
+        else
+            % Development mode
+            out = fullfile(pwd, 'build', 'graphics');
+        end
         end
 
         function path = DexterPath()
