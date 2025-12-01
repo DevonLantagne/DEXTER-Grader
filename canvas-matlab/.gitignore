@@ -1,0 +1,8 @@
+.env
+*.asv
+*.m~
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+excel2canvas.m
