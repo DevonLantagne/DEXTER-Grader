@@ -821,12 +821,20 @@ classdef DEXTER < matlab.apps.AppBase
             if ispc()
                 out = fullfile(getenv("APPDATA"), "DEXTER"); % Roaming
             elseif ismac()
-                out = "~/Library/Preferences/DEXTER";
-            elseif isunix()
-                warning("Untested on Linux!!!")
-                out = "";
-            else
+                out = fullfile(getenv("HOME"), "Library", "Application Support", "Dexter");
+            elseif isunix() % linux
+                home = getenv("HOME");
 
+                xdg_data = getenv("XDG_DATA_HOME"); % Check if XDG is active
+                if isempty(xdg_data)
+                    % Fall back to default
+                    xdg_data = fullfile(home, ".local", "share");
+                end
+                
+                out = fullfile(xdg_data, "dexter");
+            else
+                warning("Unknown OS. Saving app data to current directory");
+                out = pwd;
             end
         end
         function out = getUserHomePath()
@@ -836,8 +844,9 @@ classdef DEXTER < matlab.apps.AppBase
             elseif ismac()
                 out = fullfile(getenv("HOME"), "DEXTER");
             elseif isunix()
-                warning("Untested on Linux!!!")
-                out = "";
+                out = getenv("HOME");
+            else
+                out = pwd;
             end
         end
         function out = getConfigFile()
