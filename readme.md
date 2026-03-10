@@ -4,7 +4,7 @@ DEXTER Grader (DEXTER) is a grading calculator and gradebook manager. DEXTER’s
 
 This is not a unified gradebook. DEXTER acts on individual assignments/exams; you will need a new DEXTER project per assignment. Projects are initialized using a class list and rubric file. See the [User Guide](docs/usage.md) on how to find, create, or format these files.
 
-DEXTER is currently only supported on Windows OS.
+DEXTER is designed to run on Windows (MALTAB IDE and Standalone) and Linux (MATLAB IDE).
 
 <p align="center">
     <picture>
@@ -22,7 +22,7 @@ DEXTER is currently only supported on Windows OS.
 There are two ways to run DEXTER Grader: as a standalone MATLAB package using the MATLAB Runtime; or directly in MATLAB. Both methods are described below.
 
 > [!IMPORTANT]
-> DEXTER Grader is only supported on Windows OS. If you are a MacOS user, please open a feature request for the OS support.
+> DEXTER Grader is only supported on Windows and Linux. If you are a MacOS user, please open a feature request for the OS support.
 
 ### Standalone + MATLAB Runtime
 
@@ -42,7 +42,7 @@ If you already have MATLAB on your system, you can clone or download this reposi
 >
 > When this repo is opened in VS Code, it will recommend extensions for this repo (including the MATLAB extension). You can then open a MATLAB terminal in VS Code and run `DEXTER`.
 >
-> MATLAB will see the `startup.m` script and execute it when the workspace is opened (which adds this repo to your path temporarily). You may have to close and reopen the MATLAB terminal for the `startup.m` to take effect, otherwise you can run the script manually by typing `startup` in the MATLAB terminal.
+> Run the `add_to_path.m` script to temporarily add repo subfolders to your path.
 
 ## Documentation
 
